@@ -62,7 +62,7 @@ ContentGenRouter.get('/getstory', async (req, res) => {
       const keyword = req.query.keyword;
   
       const completion = await openai.chat.completions.create({
-        messages: [{ role: 'user', content: `write a story on <${keyword}> in both languages hindi and english as well` }],
+        messages: [{ role: 'user', content: `write a short story on <${keyword}> in both languages hindi and english as well` }],
         model: 'gpt-3.5-turbo',
       });
     

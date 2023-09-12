@@ -11,7 +11,7 @@
         }
 
         #maincont{
-            background-color: rgb(241, 241, 242);
+            background-color: rgb(254, 253, 253);
             border: 1px solid black;
             width: 60%;
             margin: auto;
@@ -38,7 +38,7 @@
             margin-bottom: 40px;
         }
         body{
-            background-color: rgb(35, 34, 31);
+            background-color: rgb(22, 22, 22);
         }
 
         #inputdiv > input{
@@ -72,7 +72,7 @@
             margin: auto;
             margin-top: 50px;
             border-radius: 15px;
-            
+            transition: ease-in(1.3s);
         }
 
         .content > p{
@@ -88,9 +88,10 @@
             max-height: 50vh;
         }
 
+
         #loader{
             margin-top: 30px;
-            mix-blend-mode:color-burn;
+            /* mix-blend-mode:color-burn; */
             display:  none;
             margin: auto;
 
@@ -120,10 +121,10 @@
 </head>
 <body>
     <div id="maincont">
-        <h1 id="head">Shayri Generator</h1>
+        <h1 id="head"> Generate Shayri</h1>
         <div id="inputdiv">
             <input type="text" id="title" placeholder="Enter Story Title" required>
-            <button id="btn">Generate Quotes</button>
+            <button id="btn">Generate</button>
         </div>
         <div class="selectdiv">
             <p >Topic : </p>
@@ -165,16 +166,16 @@
 
         options.addEventListener('change', (e)=>{
             if(e.target.value.includes('shayri')){
-                head.innerText = "Shayri Generator"
+                head.innerText = "Generate Shayri"
             }
             else if(e.target.value.includes('story')){
-                head.innerText = "Story Generator"
+                head.innerText = "Generate Story"
             }
             else if(e.target.value.includes('quote')){
-                head.innerText = "Quotes Generator"
+                head.innerText = "Generate Quotes"
             }
             else if(e.target.value.includes('joke')){
-                head.innerText = "Jokes Generator"
+                head.innerText = "Generate Jokes"
             }
         })
 
@@ -191,7 +192,7 @@
 
       
         async function getdata(){
-            fetch(`http://localhost:8000/content-creator/${options.value}?keyword=${title.value}`)
+            fetch(`https://long-pink-goshawk-tutu.cyclic.app/content-creator/${options.value}?keyword=${title.value}`)
             .then(response => response.json())
             .then(data =>{
                 div.style.display ='block'
