@@ -1,13 +1,16 @@
 const express = require('express')
 const {  OpenAI } = require('openai');
 require('dotenv').config()
-const axios = require('axios')
 
 const ContentGenRouter = express.Router()
 
+const controller = new AbortController();
+const signal = controller.signal;
+
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
-});
+}, {signal});
+
 
 
 ContentGenRouter.get('/getshayri', async (req, res) => {
@@ -96,6 +99,9 @@ ContentGenRouter.get('/getquote', async (req, res) => {
       res.status(500).send("Something went wrong");
     }
   });
+
+   controller.abort();
+  
 
   module.exports = {ContentGenRouter}
 
