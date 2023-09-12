@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Generator</title>
+    <style>
+        *{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-sizing: border-box;
+        }
+
+        #maincont{
+            background-color: rgb(241, 241, 242);
+            border: 1px solid black;
+            width: 60%;
+            margin: auto;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            min-height: 97vh;
+            max-height: 97vh;
+        }
+
+        #maincont > h1{
+            margin-bottom: 50px;
+            /* font-size: xx-large; */
+        }
+
+        #inputdiv{
+            margin-top: 10px;
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        body{
+            background-color: rgb(35, 34, 31);
+        }
+
+        #inputdiv > input{
+            width: 300px;
+            padding : 10px;
+            font-size: larger;
+            border:2px solid grey;
+            border-radius: 7px;
+            margin-right: 10px;
+        }
+        
+        #inputdiv > input:focus{
+            outline:  none;
+            border:2px solid rgb(171, 224, 224);
+        }
+
+        #inputdiv > button{
+            font-size: larger;
+            font-weight: 500;
+            border-radius: 7px;
+            border: 1px solid rgb(3, 100, 3);
+            color: white;
+            background-color: green;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .content{
+            box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+            width: 90%;
+            margin: auto;
+            margin-top: 50px;
+            border-radius: 15px;
+            
+        }
+
+        .content > p{
+            font-style: italic;
+            font:bold;
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 40px;
+            line-break: loose;
+            overflow-x: scroll;
+            overflow-y: scroll;
+            padding: 30px;
+            max-height: 50vh;
+        }
+
+        #loader{
+            margin-top: 30px;
+            mix-blend-mode:color-burn;
+            display:  none;
+            margin: auto;
+
+        }
+
+        .selectdiv{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: larger;
+            margin-bottom: 20px;
+        }
+
+        .selectdiv p{
+           font-size: larger;
+            margin-right: 20px;
+        }
+
+        .selectdiv > select{
+            width: 300px;
+            border-radius: 15px;
+            padding: 5px 15px;
+            font-size: larger;
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="maincont">
+        <h1 id="head">Shayri Generator</h1>
+        <div id="inputdiv">
+            <input type="text" id="title" placeholder="Enter Story Title" required>
+            <button id="btn">Generate Quotes</button>
+        </div>
+        <div class="selectdiv">
+            <p >Topic : </p>
+            <select name="select" id="options">
+                <option value="getshayri">Shayri</option>
+                <option value="getjoke">Joke</option>
+                <option value="getstory">Story</option>
+                <option value="getquote">Quotes</option>
+            </select>
+        </div>    
+        <div>
+            <img  id="loader" src="./images/Fidget-spinner.gif" alt="">
+        </div>
+        <div class="content">
+            <p id="content"></p>
+        </div>
+    </div>
+
+    <script>
+        const head = document.getElementById('head')
+        const loader = document.getElementById('loader')
+        const title = document.getElementById('title');
+        const p = document.getElementById('content')
+        const div = document.querySelector('.content')
+        const btn = document.getElementById('btn')
+        let options = document.getElementById('options')
+
+        if(p.innerText.length == 0){
+            div.style.display = 'none'
+        }
+
+        function load(){
+            loader.style.display = 'block'
+        }
+
+        function rload(){
+            loader.style.display = 'none'
+        }
+
+        options.addEventListener('change', (e)=>{
+            if(e.target.value.includes('shayri')){
+                head.innerText = "Shayri Generator"
+            }
+            else if(e.target.value.includes('story')){
+                head.innerText = "Story Generator"
+            }
+            else if(e.target.value.includes('quote')){
+                head.innerText = "Quotes Generator"
+            }
+            else if(e.target.value.includes('joke')){
+                head.innerText = "Jokes Generator"
+            }
+        })
+
+        btn.addEventListener('click', ()=>{
+            if(title.value.length < 3) {
+                alert('please give a valid title')
+                return
+            }
+            load()
+        
+            getdata()
+        })
+
+
+      
+        async function getdata(){
+            fetch(`http://localhost:8000/content-creator/${options.value}?keyword=${title.value}`)
+            .then(response => response.json())
+            .then(data =>{
+                div.style.display ='block'
+                p.innerText = data.content;
+                rload()
+                })
+            .catch(error => {
+                console.error('Error:', error);
+                return
+            });
+        }
+    </script>
+</body>
+</html>
