@@ -4,12 +4,10 @@ require('dotenv').config()
 
 const ContentGenRouter = express.Router()
 
-const controller = new AbortController();
-const signal = controller.signal;
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
-}, {signal});
+});
 
 
 
@@ -100,7 +98,6 @@ ContentGenRouter.get('/getquote', async (req, res) => {
     }
   });
 
-   controller.abort();
   
 
   module.exports = {ContentGenRouter}
