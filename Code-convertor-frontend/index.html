@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Convertor</title>
+    <style>
+        *{
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            box-sizing: border-box;
+            /* font-size: larger; */
+        }
+        body{
+            background-color: rgb(58, 56, 56);
+        }
+
+        h1{
+            text-align: center;
+            font-size: xx-large;
+            color:beige
+        }
+        textarea{
+            font-size: larger;
+            background-color:#272822;
+            color: white;
+            overflow-wrap:normal;
+            overflow-y: auto;
+            overflow-x: auto;
+            padding: 17px;
+        }
+
+
+        textarea:focus{
+            outline: none;
+        }
+        .convertorDvi{
+            min-height: 75vh;
+            max-height: 75vh;
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            padding: 30px;
+            grid-gap: 50px;
+            position: relative;
+        }
+
+        .convertorDvi > textarea{
+            border-radius: 15px;
+            box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+            width: 100%;
+            height: 100%;
+            top : 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-size: 25px;
+        }
+
+        select{
+            color: white;
+            padding-left: 15px;
+            padding-right: 10px;
+            background-color:#272728;
+        }
+        select:focus{
+            outline: none;
+            border-color: rgb(158, 112, 112);
+        }
+
+        #editor{
+            font-style: italic;
+        }
+        #options{
+            /* font-size: xx-large; */
+            display: grid ;
+            grid-template-columns:  repeat(4,1fr);
+            padding: 40px;
+            grid-gap: 40px 70px;
+            /* align-items: center; */
+            grid-template-rows: 50px;
+        }
+ 
+        #options > button, 
+        #options > select{
+            font-size: x-large;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #options button{
+            border: none;
+            color : white;
+            background-color: rgba(31, 31, 44, 0.807);
+        }
+        .maincont {
+            width: 100%;
+            position: relative;
+        }
+
+        .maincont > div:first-child{
+            top :0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background-color: rgb(236, 234, 232);
+            opacity: 0.1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+
+        img{
+            width: 300px;
+            mix-blend-mode: color-burn;
+        }
+        
+
+
+    </style>
+</head>
+<body>
+    <div><h1>Code Convertor</h1>
+        <hr> </div>
+    <div class="maincont">
+        <div class="loader"><img src="./imgaes/Settings.gif" alt=""></div>
+            <div class="convertorDvi">
+                <textarea id="editor" placeholder="Enter Your Code Here..."></textarea>
+                <textarea id="editor2"  readonly placeholder=" Output will visible here..."></textarea>
+            </div>
+            <div id="options">
+                <select id="lanSelect">
+                    <option value="">Select Language </option>
+                    <option value="python">Python</option>
+                    <option value="javascript">Javascript</option>
+                    <option value="c++">C++</option>
+                    <option value="java">JAVA</option>
+                    <option value="c">C</option>
+                </select>
+                <button id="convertBtn">Convert</button>
+                <button id="debugBtn"> Debug</button>
+                <button id="qualityBtn">Quality Check</button>
+            </div>
+    </div>
+</body>
+<script>
+    const url = 'https://long-pink-goshawk-tutu.cyclic.app/'
+    const loader = document.querySelector('.loader')
+    const editor = document.getElementById('editor')
+    const editor2 = document.getElementById('editor2')
+    const convertBtn = document.getElementById('convertBtn')
+    const debugBtn = document.getElementById('debugBtn')
+    const qualityBtn = document.getElementById('qualityBtn')
+    const lanSelect = document.getElementById('lanSelect')
+
+    function load(){
+        loader.style.display = "flex"
+    }
+
+    function hload(){
+        loader.style.display = "none"
+    }
+
+    convertBtn.addEventListener('click',()=>{
+        if(lanSelect.value == "" ){
+            alert ("please select a languge to convert")
+            return
+        }else if(editor.value ==''){
+            alert('please write a valid code ')
+            return
+        }else{    
+            
+            load()
+            
+            fetch(`${url}convert`,{
+                method : "POST",
+                body : JSON.stringify({lan : lanSelect.value, code : editor.value}),
+                headers : {
+                    'Content-type' :'application/json'
+                }
+            }).then(res => res.json())
+            .then(data =>{
+                if(data.isOk){
+                    hload()
+                    editor2.value = data.content
+                }
+                else{
+                    hload()
+                    editor2.value = data.msg
+                }
+            })
+            .catch(err => {
+                hload()
+                editor2.value = err
+            })
+        }
+    })
+
+    debugBtn.addEventListener('click',()=>{
+        load()
+
+        fetch(`${url}convert/debug`,{
+            method : "POST",
+            body : JSON.stringify({code : editor.value}),
+            headers : {
+                'Content-type' :'application/json'
+            }
+        }).then(res => res.json())
+        .then(data =>{
+            if(data.isOk){
+                hload()
+                editor2.value = data.content
+            }
+            else{
+                hload()
+                editor2.value = data.msg
+            }
+        })
+        .catch(err => {
+            hload()
+            editor2.value = err
+        })
+    })
+
+    qualityBtn.addEventListener('click',()=>{
+        load()
+
+        fetch(`${url}convert/quality`,{
+            method : "POST",
+            body : JSON.stringify({code : editor.value}),
+            headers : {
+                'Content-type' :'application/json'
+            }
+        }).then(res => res.json())
+        .then(data =>{
+            if(data.isOk){
+                hload()
+                editor2.value = data.content
+            }
+            else{
+                hload()
+                editor2.value = data.msg
+            }
+        })
+        .catch(err => {
+            hload()
+            editor2.value = err
+        })
+    })
+
+</script>
+</html>
